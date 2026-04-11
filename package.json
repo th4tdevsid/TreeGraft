@@ -1,0 +1,35 @@
+{
+  "name": "treegraft",
+  "version": "0.1.0",
+  "description": "A Git GUI with structural intelligence built in from day one.",
+  "main": "dist-electron/main/index.js",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "package": "electron-builder"
+  },
+  "dependencies": {
+    "diff": "^5.2.0",
+    "electron": "^33.0.0",
+    "isomorphic-git": "^1.27.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "web-tree-sitter": "^0.23.0"
+  },
+  "devDependencies": {
+    "@types/diff": "^5.2.3",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "electron-builder": "^25.0.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0",
+    "vite-plugin-electron": "^0.28.0",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vitest": "^2.0.5"
+  }
+}
