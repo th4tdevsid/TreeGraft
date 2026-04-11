@@ -1,2 +1,2 @@
 # TreeGraft
-Git with structural merge intelligence
+Git with structural intelligence
