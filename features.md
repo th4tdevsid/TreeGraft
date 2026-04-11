@@ -1,7 +1,7 @@
 ## Roadmap
 
 ### v1 — Core Git GUI (IntelliJ parity + structural merge)
-Target: months 1-4
+Target: months 1-4.
 
 #### Repository & Navigation
 - Open any local Git repository by path
