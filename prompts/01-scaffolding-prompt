@@ -1,0 +1,109 @@
+Read CONTEXT.md fully before starting.
+
+Scaffold the TreeGraft repository. Do not write any feature code — 
+this is structure and config only.
+
+Create the following:
+
+1. package.json
+   - name: treegraft
+   - Electron 33
+   - React 18 + TypeScript
+   - Vite + vite-plugin-electron
+   - Dependencies: isomorphic-git, web-tree-sitter, diff
+   - Dev dependencies: vitest, electron-builder
+   - Scripts: dev, build, preview, test, package
+
+2. tsconfig.json — strict mode, path aliases for @core, @ui, @ipc
+
+3. vite.config.ts — vite-plugin-electron setup
+
+4. electron-builder.yml — mac (.dmg), windows (.exe), linux (.AppImage)
+
+5. Directory structure with empty index files:
+   src/
+     core/
+       interfaces/
+         DiffEngine.ts        ← just the interface, no implementation
+         GitRepository.ts     ← just the interface, no implementation
+         MergeEngine.ts       ← just the interface, no implementation
+         StructuralParser.ts  ← just the interface, no implementation
+         types.ts             ← shared types: Result, AppError, Commit, 
+                                 Branch, FileDiff, FileStatus, Entity,
+                                 Language, SyntaxTree, DiffResult,
+                                 LineDiffResult, MergeResult, MergePreview
+       adapters/
+         js/
+           JsDiffEngine.ts
+           IsomorphicGitRepo.ts
+           JsMergeEngine.ts
+           TreeSitterParser.ts
+         wasm/
+           .gitkeep
+     config/
+       engines.ts             ← wires active adapters to interfaces
+     ui/
+       components/
+         shared/              ← empty, DiffGraft components go here later
+         diff/                ← empty
+         merge/               ← empty
+         git/                 ← empty
+       hooks/
+       styles/
+         variables.css        ← CSS custom properties, dark/light theme
+     ipc/
+       index.ts               ← Electron IPC bridge
+     main/
+       index.ts               ← Electron main process entry point
+     renderer/
+       index.tsx              ← React entry point
+       App.tsx                ← root App component
+
+6. .gitignore — node_modules, dist, out, *.automerge
+
+7. README.md — one paragraph, link to CONTEXT.md and ROADMAP.md
+
+All interfaces must match exactly what is defined in CONTEXT.md.
+All types in types.ts must be complete — no TODOs, no placeholders.
+The Result<T, E> type and AppError enum must match CONTEXT.md exactly.
+engines.ts must import from interfaces, instantiate js adapters, export 
+named instances: diffEngine, gitRepo, mergeEngine, parser.
+
+Do not install dependencies. Do not run any commands. 
+Files only.
+
+
+
+########################################################
+########################################################
+########################################################
+########################################################
+
+Claude Reply 
+
+########################################################
+########################################################
+########################################################
+########################################################
+
+
+Scaffold complete. Here's what was created:
+
+  Config files (root)
+  - package.json — Electron 33, React 18+TS, Vite, isomorphic-git, web-tree-sitter, diff, vitest, electron-builder; all 5 scripts
+  - tsconfig.json + tsconfig.node.json — strict, path aliases @core / @ui / @ipc
+  - vite.config.ts — vite-plugin-electron with separate main + IPC entries, resolve aliases wired
+  - electron-builder.yml — macOS .dmg (x64+arm64), Windows NSIS .exe, Linux .AppImage
+  - index.html — Vite HTML entry
+  - .gitignore — node_modules, dist, out, *.automerge, OS/editor noise
+
+  Types (src/core/interfaces/types.ts) — all 14 types complete with no placeholders: Result<T,E>, AppError, Commit, Branch, FileStatus, FileDiff, DiffResult, LineDiffResult,
+  MergeResult, MergePreview, Entity, Language, SyntaxTree, plus supporting sub-types
+
+  Interfaces — DiffEngine, GitRepository, MergeEngine, StructuralParser match CONTEXT.md exactly
+
+  Adapters (src/core/adapters/js/) — four stub classes implementing the interfaces; all methods throw 'Not implemented'; wasm/ directory kept with .gitkeep
+
+  src/config/engines.ts — sole file that touches adapters; exports diffEngine, gitRepo, mergeEngine, parser as typed interface instances
+
+  UI skeleton — variables.css with full dark/light theme tokens; empty components/{shared,diff,merge,git}/, hooks/
