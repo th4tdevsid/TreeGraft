@@ -1,2 +1,2 @@
-export { default } from './SplitPane';
-export type { SplitPaneHandle } from './SplitPane';
+export { default } from "./SplitPane";
+export type { SplitPaneHandle } from "./SplitPane";

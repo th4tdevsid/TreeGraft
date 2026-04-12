@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
-import type { FileContent } from '@core/interfaces/types';
-import DiffViewer from '@ui/components/diff/DiffViewer';
-import '@ui/styles/variables.css';
-import styles from './App.module.css';
+import { useState, useCallback } from "react";
+import type { FileContent } from "@core/interfaces/types";
+import DiffViewer from "@ui/components/diff/DiffViewer";
+import "@ui/styles/variables.css";
+import styles from "./App.module.css";
 
 export default function App(): JSX.Element {
   const [leftFile, setLeftFile] = useState<FileContent | null>(null);

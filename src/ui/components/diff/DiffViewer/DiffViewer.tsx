@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
-import type { FileContent, DiffHunk, SyntaxTree } from '@core/interfaces/types';
-import { diffEngine, parser } from '@config/engines';
-import SplitPane, { type SplitPaneHandle } from '@ui/components/shared/SplitPane';
-import FloatingNav from '@ui/components/shared/FloatingNav';
-import HeaderBar from '@ui/components/shared/HeaderBar';
-import { buildRows, type PanelRow } from './buildRows';
-import { tokenizeFile, type Token } from './tokenize';
-import styles from './DiffViewer.module.css';
+import { useEffect, useMemo, useRef, useCallback, useState } from "react";
+import type { FileContent, DiffHunk, SyntaxTree } from "@core/interfaces/types";
+import { diffEngine, parser } from "@config/engines";
+import SplitPane, {
+  type SplitPaneHandle,
+} from "@ui/components/shared/SplitPane";
+import FloatingNav from "@ui/components/shared/FloatingNav";
+import HeaderBar from "@ui/components/shared/HeaderBar";
+import { buildRows, type PanelRow } from "./buildRows";
+import { tokenizeFile, type Token } from "./tokenize";
+import styles from "./DiffViewer.module.css";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -22,17 +24,21 @@ interface DiffViewerProps {
 // ---------------------------------------------------------------------------
 
 const ROW_TYPE_CLASS: Record<string, string> = {
-  context: '',
-  added: styles.lineAdded ?? '',
-  removed: styles.lineRemoved ?? '',
-  placeholder: styles.linePlaceholder ?? '',
+  context: "",
+  added: styles.lineAdded ?? "",
+  removed: styles.lineRemoved ?? "",
+  placeholder: styles.linePlaceholder ?? "",
 };
 
 function renderTokens(tokens: Token[]): JSX.Element[] {
   return tokens.map((tok, i) =>
-    tok.cssClass
-      ? <span key={i} className={styles[tok.cssClass]}>{tok.text}</span>
-      : <span key={i}>{tok.text}</span>,
+    tok.cssClass ? (
+      <span key={i} className={styles[tok.cssClass]}>
+        {tok.text}
+      </span>
+    ) : (
+      <span key={i}>{tok.text}</span>
+    ),
   );
 }
 
@@ -45,13 +51,15 @@ function DiffLine({
   tokens: Token[] | null;
   lineNumberWidth: number;
 }): JSX.Element {
-  const rowClass = [styles.line, ROW_TYPE_CLASS[row.type]].filter(Boolean).join(' ');
+  const rowClass = [styles.line, ROW_TYPE_CLASS[row.type]]
+    .filter(Boolean)
+    .join(" ");
   const lineNumStyle: React.CSSProperties = { width: lineNumberWidth };
 
   return (
     <div className={rowClass}>
       <span className={styles.lineNumber} style={lineNumStyle}>
-        {row.lineNumber ?? ''}
+        {row.lineNumber ?? ""}
       </span>
       <span className={styles.lineContent}>
         {tokens ? renderTokens(tokens) : row.content}
@@ -107,8 +115,8 @@ function PanelContent({
 // ---------------------------------------------------------------------------
 
 interface DropZoneProps {
-  side: 'left' | 'right';
-  onDrop: (side: 'left' | 'right', file: FileContent) => void;
+  side: "left" | "right";
+  onDrop: (side: "left" | "right", file: FileContent) => void;
 }
 
 function DropZone({ side, onDrop }: DropZoneProps): JSX.Element {
@@ -121,7 +129,7 @@ function DropZone({ side, onDrop }: DropZoneProps): JSX.Element {
       const file = e.dataTransfer.files[0];
       if (!file) return;
 
-      void file.text().then(content => {
+      void file.text().then((content) => {
         const electronFile = file as File & { path?: string };
         const filePath = electronFile.path ?? file.name;
         onDrop(side, {
@@ -137,9 +145,14 @@ function DropZone({ side, onDrop }: DropZoneProps): JSX.Element {
 
   return (
     <div
-      className={[styles.dropZone, isDragOver ? styles.dropZoneOver : ''].join(' ')}
+      className={[styles.dropZone, isDragOver ? styles.dropZoneOver : ""].join(
+        " ",
+      )}
       onDrop={handleDrop}
-      onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+      }}
       onDragLeave={() => setIsDragOver(false)}
     >
       <span className={styles.dropHint}>Drop a file here or click Open</span>
@@ -151,7 +164,10 @@ function DropZone({ side, onDrop }: DropZoneProps): JSX.Element {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JSX.Element {
+export default function DiffViewer({
+  leftFile,
+  rightFile,
+}: DiffViewerProps): JSX.Element {
   const splitPaneRef = useRef<SplitPaneHandle>(null);
   const rowProbeRef = useRef<HTMLDivElement>(null);
   const rowHeightRef = useRef<number>(0);
@@ -168,12 +184,16 @@ export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JS
   const [droppedRight, setDroppedRight] = useState<FileContent | null>(null);
 
   // Clear dropped files when props change
-  useEffect(() => { setDroppedLeft(null); }, [leftFile]);
-  useEffect(() => { setDroppedRight(null); }, [rightFile]);
+  useEffect(() => {
+    setDroppedLeft(null);
+  }, [leftFile]);
+  useEffect(() => {
+    setDroppedRight(null);
+  }, [rightFile]);
 
   const handleDrop = useCallback(
-    (side: 'left' | 'right', file: FileContent) => {
-      if (side === 'left') setDroppedLeft(file);
+    (side: "left" | "right", file: FileContent) => {
+      if (side === "left") setDroppedLeft(file);
       else setDroppedRight(file);
     },
     [],
@@ -205,8 +225,13 @@ export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JS
   // Syntax highlight (async, best-effort)
   // ---------------------------------------------------------------------------
 
-  const [leftTokenMap, setLeftTokenMap] = useState<Map<number, Token[]> | null>(null);
-  const [rightTokenMap, setRightTokenMap] = useState<Map<number, Token[]> | null>(null);
+  const [leftTokenMap, setLeftTokenMap] = useState<Map<number, Token[]> | null>(
+    null,
+  );
+  const [rightTokenMap, setRightTokenMap] = useState<Map<
+    number,
+    Token[]
+  > | null>(null);
 
   useEffect(() => {
     setLeftTokenMap(null);
@@ -218,9 +243,13 @@ export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JS
       .then((tree: SyntaxTree) => {
         if (!cancelled) setLeftTokenMap(tokenizeFile(tree));
       })
-      .catch(() => { /* gracefully degrade to plain text */ });
+      .catch(() => {
+        /* gracefully degrade to plain text */
+      });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [effectiveLeft]);
 
   useEffect(() => {
@@ -233,9 +262,13 @@ export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JS
       .then((tree: SyntaxTree) => {
         if (!cancelled) setRightTokenMap(tokenizeFile(tree));
       })
-      .catch(() => { /* gracefully degrade to plain text */ });
+      .catch(() => {
+        /* gracefully degrade to plain text */
+      });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [effectiveRight]);
 
   // ---------------------------------------------------------------------------
@@ -251,7 +284,9 @@ export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JS
       if (!hunk) return;
 
       // Find row index in leftRows where lineNumber === hunk.oldStart
-      const rowIndex = leftRows.findIndex(r => r.lineNumber === hunk.oldStart);
+      const rowIndex = leftRows.findIndex(
+        (r) => r.lineNumber === hunk.oldStart,
+      );
       if (rowIndex < 0) return;
 
       const rh = rowHeightRef.current;
@@ -267,8 +302,8 @@ export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JS
   // ---------------------------------------------------------------------------
 
   const maxLineNumber = Math.max(
-    effectiveLeft?.content.split('\n').length ?? 1,
-    effectiveRight?.content.split('\n').length ?? 1,
+    effectiveLeft?.content.split("\n").length ?? 1,
+    effectiveRight?.content.split("\n").length ?? 1,
   );
   const lineNumberWidth = String(maxLineNumber).length * 9 + 16;
 
@@ -292,8 +327,8 @@ export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JS
   return (
     <div className={styles.container}>
       <HeaderBar
-        leftFile={effectiveLeft?.name ?? ''}
-        rightFile={effectiveRight?.name ?? ''}
+        leftFile={effectiveLeft?.name ?? ""}
+        rightFile={effectiveRight?.name ?? ""}
         stats={stats}
       />
 
@@ -327,9 +362,7 @@ export default function DiffViewer({ leftFile, rightFile }: DiffViewerProps): JS
         />
       </div>
 
-      {hasBoth && (
-        <FloatingNav hunks={hunks} onNavigate={handleNavigate} />
-      )}
+      {hasBoth && <FloatingNav hunks={hunks} onNavigate={handleNavigate} />}
     </div>
   );
 }

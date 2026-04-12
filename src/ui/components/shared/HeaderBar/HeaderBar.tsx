@@ -1,5 +1,5 @@
-import type { DiffStats } from '@core/interfaces/types';
-import styles from './HeaderBar.module.css';
+import type { DiffStats } from "@core/interfaces/types";
+import styles from "./HeaderBar.module.css";
 
 interface HeaderBarProps {
   leftFile: string;
@@ -7,11 +7,15 @@ interface HeaderBarProps {
   stats: DiffStats;
 }
 
-export default function HeaderBar({ leftFile, rightFile, stats }: HeaderBarProps): JSX.Element {
+export default function HeaderBar({
+  leftFile,
+  rightFile,
+  stats,
+}: HeaderBarProps): JSX.Element {
   return (
     <div className={styles.header}>
       <span className={styles.file} title={leftFile}>
-        {leftFile || '—'}
+        {leftFile || "—"}
       </span>
 
       <div className={styles.stats}>
@@ -24,7 +28,7 @@ export default function HeaderBar({ leftFile, rightFile, stats }: HeaderBarProps
       </div>
 
       <span className={`${styles.file} ${styles.fileRight}`} title={rightFile}>
-        {rightFile || '—'}
+        {rightFile || "—"}
       </span>
     </div>
   );

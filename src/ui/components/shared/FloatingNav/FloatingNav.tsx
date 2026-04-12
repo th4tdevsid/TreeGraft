@@ -1,14 +1,17 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { DiffHunk } from '@core/interfaces/types';
-import { navigate } from './navigate';
-import styles from './FloatingNav.module.css';
+import { useState, useEffect, useCallback } from "react";
+import type { DiffHunk } from "@core/interfaces/types";
+import { navigate } from "./navigate";
+import styles from "./FloatingNav.module.css";
 
 interface FloatingNavProps {
   hunks: DiffHunk[];
   onNavigate: (index: number) => void;
 }
 
-export default function FloatingNav({ hunks, onNavigate }: FloatingNavProps): JSX.Element | null {
+export default function FloatingNav({
+  hunks,
+  onNavigate,
+}: FloatingNavProps): JSX.Element | null {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Reset to first hunk when hunk list changes
@@ -17,7 +20,7 @@ export default function FloatingNav({ hunks, onNavigate }: FloatingNavProps): JS
   }, [hunks]);
 
   const go = useCallback(
-    (direction: 'next' | 'prev') => {
+    (direction: "next" | "prev") => {
       if (hunks.length === 0) return;
       const next = navigate(currentIndex, hunks.length, direction);
       setCurrentIndex(next);
@@ -29,12 +32,12 @@ export default function FloatingNav({ hunks, onNavigate }: FloatingNavProps): JS
   // Keyboard handler — F7 / Shift+F7
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key !== 'F7') return;
+      if (e.key !== "F7") return;
       e.preventDefault();
-      go(e.shiftKey ? 'prev' : 'next');
+      go(e.shiftKey ? "prev" : "next");
     };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, [go]);
 
   if (hunks.length === 0) return null;
@@ -43,7 +46,7 @@ export default function FloatingNav({ hunks, onNavigate }: FloatingNavProps): JS
     <div className={styles.nav} role="navigation" aria-label="Diff navigation">
       <button
         className={styles.button}
-        onClick={() => go('prev')}
+        onClick={() => go("prev")}
         aria-label="Previous change (Shift+F7)"
         title="Shift+F7"
       >
@@ -51,12 +54,13 @@ export default function FloatingNav({ hunks, onNavigate }: FloatingNavProps): JS
       </button>
 
       <span className={styles.count}>
-        {currentIndex + 1} of {hunks.length} change{hunks.length !== 1 ? 's' : ''}
+        {currentIndex + 1} of {hunks.length} change
+        {hunks.length !== 1 ? "s" : ""}
       </span>
 
       <button
         className={styles.button}
-        onClick={() => go('next')}
+        onClick={() => go("next")}
         aria-label="Next change (F7)"
         title="F7"
       >

@@ -19,3 +19,9 @@ Rules:
 - Always use semicolons in TypeScript and JavaScript
 - Every file must end with a newline
 
+## Formatting
+
+All TypeScript and JavaScript files are formatted with Prettier.
+Run `npm run format` before committing.
+Never manually adjust whitespace or indentation — let Prettier handle it.
+

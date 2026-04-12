@@ -1,4 +1,4 @@
-import type { Entity, Language, SyntaxTree } from './types';
+import type { Entity, Language, SyntaxTree } from "./types";
 
 export interface StructuralParser {
   parse(code: string, language: Language): Promise<SyntaxTree>;

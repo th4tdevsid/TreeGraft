@@ -6,8 +6,8 @@ import {
   useEffect,
   useCallback,
   type ReactNode,
-} from 'react';
-import styles from './SplitPane.module.css';
+} from "react";
+import styles from "./SplitPane.module.css";
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -59,7 +59,9 @@ const SplitPane = forwardRef<SplitPaneHandle, SplitPaneProps>(
       if (rightRef.current && leftRef.current) {
         rightRef.current.scrollTop = leftRef.current.scrollTop;
       }
-      setTimeout(() => { isSyncingRef.current = false; }, 50);
+      setTimeout(() => {
+        isSyncingRef.current = false;
+      }, 50);
     }, [syncScroll]);
 
     const handleRightScroll = useCallback(() => {
@@ -68,7 +70,9 @@ const SplitPane = forwardRef<SplitPaneHandle, SplitPaneProps>(
       if (leftRef.current && rightRef.current) {
         leftRef.current.scrollTop = rightRef.current.scrollTop;
       }
-      setTimeout(() => { isSyncingRef.current = false; }, 50);
+      setTimeout(() => {
+        isSyncingRef.current = false;
+      }, 50);
     }, [syncScroll]);
 
     // ---------------------------------------------------------------------------
@@ -92,12 +96,12 @@ const SplitPane = forwardRef<SplitPaneHandle, SplitPaneProps>(
 
         const onMouseUp = () => {
           isDraggingRef.current = false;
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
+          window.removeEventListener("mousemove", onMouseMove);
+          window.removeEventListener("mouseup", onMouseUp);
         };
 
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
       },
       [leftWidthPct],
     );
@@ -107,8 +111,8 @@ const SplitPane = forwardRef<SplitPaneHandle, SplitPaneProps>(
       const prevent = (e: Event) => {
         if (isDraggingRef.current) e.preventDefault();
       };
-      window.addEventListener('selectstart', prevent);
-      return () => window.removeEventListener('selectstart', prevent);
+      window.addEventListener("selectstart", prevent);
+      return () => window.removeEventListener("selectstart", prevent);
     }, []);
 
     // ---------------------------------------------------------------------------
@@ -147,5 +151,5 @@ const SplitPane = forwardRef<SplitPaneHandle, SplitPaneProps>(
   },
 );
 
-SplitPane.displayName = 'SplitPane';
+SplitPane.displayName = "SplitPane";
 export default SplitPane;

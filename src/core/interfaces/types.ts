@@ -5,11 +5,11 @@
 export type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
 
 export enum AppError {
-  GitOperationFailed = 'GIT_OPERATION_FAILED',
-  ParseFailed = 'PARSE_FAILED',
-  FileNotFound = 'FILE_NOT_FOUND',
-  InvalidRepository = 'INVALID_REPOSITORY',
-  MergeFailed = 'MERGE_FAILED',
+  GitOperationFailed = "GIT_OPERATION_FAILED",
+  ParseFailed = "PARSE_FAILED",
+  FileNotFound = "FILE_NOT_FOUND",
+  InvalidRepository = "INVALID_REPOSITORY",
+  MergeFailed = "MERGE_FAILED",
 }
 
 // ---------------------------------------------------------------------------
@@ -37,13 +37,13 @@ export interface Branch {
 }
 
 export type FileChangeStatus =
-  | 'modified'
-  | 'added'
-  | 'deleted'
-  | 'renamed'
-  | 'untracked'
-  | 'staged'
-  | 'unmodified';
+  | "modified"
+  | "added"
+  | "deleted"
+  | "renamed"
+  | "untracked"
+  | "staged"
+  | "unmodified";
 
 export interface FileStatus {
   path: string;
@@ -55,7 +55,7 @@ export interface FileStatus {
 // Diff domain types
 // ---------------------------------------------------------------------------
 
-export type DiffLineType = 'context' | 'added' | 'removed';
+export type DiffLineType = "context" | "added" | "removed";
 
 export interface DiffLine {
   type: DiffLineType;
@@ -123,15 +123,15 @@ export interface MergePreview {
 // Structural / parser domain types
 // ---------------------------------------------------------------------------
 
-export type Language = 'typescript' | 'javascript' | 'python' | 'java' | 'rust';
+export type Language = "typescript" | "javascript" | "python" | "java" | "rust";
 
 export type EntityKind =
-  | 'function'
-  | 'class'
-  | 'method'
-  | 'interface'
-  | 'type'
-  | 'variable';
+  | "function"
+  | "class"
+  | "method"
+  | "interface"
+  | "type"
+  | "variable";
 
 export interface Entity {
   name: string;

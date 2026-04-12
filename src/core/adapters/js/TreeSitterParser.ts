@@ -1,6 +1,11 @@
-import Parser from 'web-tree-sitter';
-import type { StructuralParser } from '@core/interfaces/StructuralParser';
-import type { Entity, Language, SyntaxNode, SyntaxTree } from '@core/interfaces/types';
+import Parser from "web-tree-sitter";
+import type { StructuralParser } from "@core/interfaces/StructuralParser";
+import type {
+  Entity,
+  Language,
+  SyntaxNode,
+  SyntaxTree,
+} from "@core/interfaces/types";
 
 // ---------------------------------------------------------------------------
 // Language → wasm file mapping
@@ -9,23 +14,23 @@ import type { Entity, Language, SyntaxNode, SyntaxTree } from '@core/interfaces/
 //   npx tree-sitter build-wasm node_modules/tree-sitter-<lang>
 // ---------------------------------------------------------------------------
 const LANGUAGE_WASM: Record<Language, string> = {
-  typescript: 'tree-sitter-typescript.wasm',
-  javascript: 'tree-sitter-javascript.wasm',
-  python: 'tree-sitter-python.wasm',
-  java: 'tree-sitter-java.wasm',
-  rust: 'tree-sitter-rust.wasm',
+  typescript: "tree-sitter-typescript.wasm",
+  javascript: "tree-sitter-javascript.wasm",
+  python: "tree-sitter-python.wasm",
+  java: "tree-sitter-java.wasm",
+  rust: "tree-sitter-rust.wasm",
 };
 
 const EXTENSION_TO_LANGUAGE: Record<string, Language> = {
-  '.ts': 'typescript',
-  '.tsx': 'typescript',
-  '.js': 'javascript',
-  '.jsx': 'javascript',
-  '.mjs': 'javascript',
-  '.cjs': 'javascript',
-  '.py': 'python',
-  '.java': 'java',
-  '.rs': 'rust',
+  ".ts": "typescript",
+  ".tsx": "typescript",
+  ".js": "javascript",
+  ".jsx": "javascript",
+  ".mjs": "javascript",
+  ".cjs": "javascript",
+  ".py": "python",
+  ".java": "java",
+  ".rs": "rust",
 };
 
 export class TreeSitterParser implements StructuralParser {
@@ -57,7 +62,9 @@ export class TreeSitterParser implements StructuralParser {
 
     await this.init();
     const wasmFile = LANGUAGE_WASM[language];
-    const lang = await Parser.Language.load(`/tree-sitter/grammars/${wasmFile}`);
+    const lang = await Parser.Language.load(
+      `/tree-sitter/grammars/${wasmFile}`,
+    );
     this.languageCache.set(language, lang);
     return lang;
   }
@@ -83,7 +90,7 @@ export class TreeSitterParser implements StructuralParser {
   }
 
   detectLanguage(filePath: string): Language | null {
-    const dot = filePath.lastIndexOf('.');
+    const dot = filePath.lastIndexOf(".");
     if (dot === -1) return null;
     const ext = filePath.slice(dot).toLowerCase();
     return EXTENSION_TO_LANGUAGE[ext] ?? null;
@@ -97,7 +104,10 @@ export class TreeSitterParser implements StructuralParser {
 function adaptNode(node: Parser.SyntaxNode): SyntaxNode {
   return {
     type: node.type,
-    startPosition: { row: node.startPosition.row, column: node.startPosition.column },
+    startPosition: {
+      row: node.startPosition.row,
+      column: node.startPosition.column,
+    },
     endPosition: { row: node.endPosition.row, column: node.endPosition.column },
     startIndex: node.startIndex,
     endIndex: node.endIndex,

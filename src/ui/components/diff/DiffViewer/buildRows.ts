@@ -1,10 +1,10 @@
-import type { DiffLine } from '@core/interfaces/types';
+import type { DiffLine } from "@core/interfaces/types";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export type RowType = 'context' | 'added' | 'removed' | 'placeholder';
+export type RowType = "context" | "added" | "removed" | "placeholder";
 
 export interface PanelRow {
   lineNumber: number | null;
@@ -34,9 +34,17 @@ export function buildRows(lines: DiffLine[]): SideBySideRows {
   while (i < lines.length) {
     const line = lines[i];
 
-    if (line.type === 'context') {
-      left.push({ lineNumber: line.oldLineNumber, content: line.content, type: 'context' });
-      right.push({ lineNumber: line.newLineNumber, content: line.content, type: 'context' });
+    if (line.type === "context") {
+      left.push({
+        lineNumber: line.oldLineNumber,
+        content: line.content,
+        type: "context",
+      });
+      right.push({
+        lineNumber: line.newLineNumber,
+        content: line.content,
+        type: "context",
+      });
       i++;
       continue;
     }
@@ -45,9 +53,9 @@ export function buildRows(lines: DiffLine[]): SideBySideRows {
     const removed: DiffLine[] = [];
     const added: DiffLine[] = [];
 
-    while (i < lines.length && lines[i].type !== 'context') {
-      if (lines[i].type === 'removed') removed.push(lines[i]);
-      else if (lines[i].type === 'added') added.push(lines[i]);
+    while (i < lines.length && lines[i].type !== "context") {
+      if (lines[i].type === "removed") removed.push(lines[i]);
+      else if (lines[i].type === "added") added.push(lines[i]);
       i++;
     }
 
@@ -58,20 +66,20 @@ export function buildRows(lines: DiffLine[]): SideBySideRows {
         left.push({
           lineNumber: removed[j].oldLineNumber,
           content: removed[j].content,
-          type: 'removed',
+          type: "removed",
         });
       } else {
-        left.push({ lineNumber: null, content: '', type: 'placeholder' });
+        left.push({ lineNumber: null, content: "", type: "placeholder" });
       }
 
       if (j < added.length) {
         right.push({
           lineNumber: added[j].newLineNumber,
           content: added[j].content,
-          type: 'added',
+          type: "added",
         });
       } else {
-        right.push({ lineNumber: null, content: '', type: 'placeholder' });
+        right.push({ lineNumber: null, content: "", type: "placeholder" });
       }
     }
   }
