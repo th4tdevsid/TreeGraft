@@ -6,7 +6,7 @@ import SplitPane, {
 } from "@ui/components/shared/SplitPane";
 import FloatingNav from "@ui/components/shared/FloatingNav";
 import HeaderBar from "@ui/components/shared/HeaderBar";
-import { buildRows, type PanelRow } from "./buildRows";
+import { buildRows, type PanelRow, type CharRange } from "./buildRows";
 import { tokenizeFile, type Token } from "./tokenize";
 import styles from "./DiffViewer.module.css";
 
@@ -30,6 +30,12 @@ const ROW_TYPE_CLASS: Record<string, string> = {
   placeholder: styles.linePlaceholder ?? "",
 };
 
+/** Class for the muted whole-line background when charRanges are present */
+const ROW_MUTED_CLASS: Partial<Record<string, string>> = {
+  added: styles.lineAddedMuted ?? "",
+  removed: styles.lineRemovedMuted ?? "",
+};
+
 function renderTokens(tokens: Token[]): JSX.Element[] {
   return tokens.map((tok, i) =>
     tok.cssClass ? (
@@ -42,6 +48,28 @@ function renderTokens(tokens: Token[]): JSX.Element[] {
   );
 }
 
+/** Render content sliced by character ranges, highlighting changed spans. */
+function renderCharRanges(
+  content: string,
+  ranges: CharRange[],
+  rowType: string,
+): JSX.Element[] {
+  const highlightClass =
+    rowType === "added" ? styles.intraAdded : styles.intraRemoved;
+
+  return ranges.map((range, i) => {
+    const text = content.slice(range.start, range.end);
+    if (range.type === "unchanged") {
+      return <span key={i}>{text}</span>;
+    }
+    return (
+      <span key={i} className={highlightClass}>
+        {text}
+      </span>
+    );
+  });
+}
+
 function DiffLine({
   row,
   tokens,
@@ -51,19 +79,33 @@ function DiffLine({
   tokens: Token[] | null;
   lineNumberWidth: number;
 }): JSX.Element {
-  const rowClass = [styles.line, ROW_TYPE_CLASS[row.type]]
-    .filter(Boolean)
-    .join(" ");
+  // Use muted background when charRanges are present (intra-line diff),
+  // otherwise use the standard full-intensity background.
+  const bgClass =
+    row.charRanges !== undefined
+      ? (ROW_MUTED_CLASS[row.type] ?? "")
+      : (ROW_TYPE_CLASS[row.type] ?? "");
+
+  const rowClass = [styles.line, bgClass].filter(Boolean).join(" ");
   const lineNumStyle: React.CSSProperties = { width: lineNumberWidth };
+
+  // Char-range rendering takes priority over syntax tokens so that
+  // changed character spans are always visible.
+  let content: React.ReactNode;
+  if (row.charRanges !== undefined) {
+    content = renderCharRanges(row.content, row.charRanges, row.type);
+  } else if (tokens !== null) {
+    content = renderTokens(tokens);
+  } else {
+    content = row.content;
+  }
 
   return (
     <div className={rowClass}>
       <span className={styles.lineNumber} style={lineNumStyle}>
         {row.lineNumber ?? ""}
       </span>
-      <span className={styles.lineContent}>
-        {tokens ? renderTokens(tokens) : row.content}
-      </span>
+      <span className={styles.lineContent}>{content}</span>
     </div>
   );
 }
@@ -243,8 +285,8 @@ export default function DiffViewer({
       .then((tree: SyntaxTree) => {
         if (!cancelled) setLeftTokenMap(tokenizeFile(tree));
       })
-      .catch(() => {
-        /* gracefully degrade to plain text */
+      .catch((err: unknown) => {
+        console.warn("[TreeGraft] left syntax highlighting failed:", err);
       });
 
     return () => {
@@ -262,8 +304,8 @@ export default function DiffViewer({
       .then((tree: SyntaxTree) => {
         if (!cancelled) setRightTokenMap(tokenizeFile(tree));
       })
-      .catch(() => {
-        /* gracefully degrade to plain text */
+      .catch((err: unknown) => {
+        console.warn("[TreeGraft] right syntax highlighting failed:", err);
       });
 
     return () => {

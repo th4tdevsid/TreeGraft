@@ -51,12 +51,39 @@
   border-left: 3px solid var(--color-diff-added-text);
 }
 
+/* Intra-line diff: muted background when only part of the line changed */
+.lineAddedMuted {
+  background: var(--color-diff-added-muted);
+}
+
+.lineAddedMuted .lineContent {
+  border-left: 3px solid var(--color-diff-added-text);
+}
+
 .lineRemoved {
   background: var(--color-diff-removed-bg);
 }
 
 .lineRemoved .lineContent {
   border-left: 3px solid var(--color-diff-removed-text);
+}
+
+/* Intra-line diff: muted background when only part of the line changed */
+.lineRemovedMuted {
+  background: var(--color-diff-removed-muted);
+}
+
+.lineRemovedMuted .lineContent {
+  border-left: 3px solid var(--color-diff-removed-text);
+}
+
+/* Character-level highlight spans within intra-line diff rows */
+.intraAdded {
+  background: var(--color-diff-added-line);
+}
+
+.intraRemoved {
+  background: var(--color-diff-removed-line);
 }
 
 .linePlaceholder {

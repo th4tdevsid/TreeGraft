@@ -1,0 +1,66 @@
+Read CONTEXT.md fully before starting.
+
+Two bugs to fix in the diff viewer:
+
+## Bug 1 — Syntax highlighting not working
+
+tree-sitter.wasm core file needs to be loaded from the correct path.
+Check where TreeSitterParser initialises web-tree-sitter and ensure it
+loads from public/tree-sitter/tree-sitter.wasm.
+
+Also check vite.config.ts — the public/ directory contents must be
+served correctly in both dev and production Electron builds. The wasm
+files must be accessible at runtime.
+
+If TreeSitterParser is catching parse errors silently and falling back
+to plain text, add a console.warn so we can see what is failing.
+
+## Bug 2 — Whole line highlighted instead of changed tokens
+
+Currently when a line is modified (not added or removed entirely) the
+whole line gets a red or green background. This is wrong.
+
+Example:
+  left:  import { join } from "path";
+  right: import { join, resolve } from "path";
+
+Expected behaviour:
+  - The line background should be a muted red/green (not full intensity)
+  - Only the changed token — ", resolve" — should have a full intensity
+    highlight within the line
+
+This is called word-level diff or intra-line diff.
+
+Implementation:
+  In JsDiffEngine, for lines that are modified (appear as one removed +
+  one added in the same hunk), compute a character-level diff using
+  Diff.diffChars() from the diff package.
+
+  Return an additional field on modified lines:
+    charDiff?: { left: CharRange[]; right: CharRange[] }
+  where CharRange is:
+    { start: number; end: number; type: 'added' | 'removed' | 'unchanged' }
+
+  In DiffViewer, when rendering a modified line:
+  - Apply a muted background to the whole line (--color-diff-added-muted
+    and --color-diff-removed-muted, define these as more transparent
+    versions of the existing diff colours)
+  - Render the line content as spans, applying full intensity highlight
+    only to the changed character ranges
+
+  A line is considered "modified" (not fully added/removed) when a
+  removed line and an added line appear as a pair within the same hunk
+  and their content similarity is above 30% (use Diff.diffChars length
+  ratio to determine similarity).
+
+## Tests
+- Add Vitest tests for the intra-line diff logic
+- Test: single token added in the middle of a line
+- Test: single token removed
+- Test: multiple tokens changed
+- Test: fully replaced line (low similarity) should NOT get intra-line
+  diff, should get full line highlight
+
+Do not change any interfaces in src/core/interfaces/.
+All errors via Result<T, AppError>.
+No any types.

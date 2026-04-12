@@ -47,8 +47,11 @@ export class TreeSitterParser implements StructuralParser {
     if (this.initPromise !== null) return this.initPromise;
 
     this.initPromise = Parser.init({
-      // tree-sitter.wasm must be in public/tree-sitter/
-      locateFile: (name: string) => `/tree-sitter/${name}`,
+      // Resolve relative to document.baseURI so this works for both
+      // the Vite dev server (http://localhost:5173/) and production
+      // Electron (file:///path/to/dist/index.html).
+      locateFile: (name: string) =>
+        new URL(`tree-sitter/${name}`, document.baseURI).href,
     }).then(() => {
       this.ready = true;
     });
@@ -63,7 +66,7 @@ export class TreeSitterParser implements StructuralParser {
     await this.init();
     const wasmFile = LANGUAGE_WASM[language];
     const lang = await Parser.Language.load(
-      `/tree-sitter/grammars/${wasmFile}`,
+      new URL(`tree-sitter/grammars/${wasmFile}`, document.baseURI).href,
     );
     this.languageCache.set(language, lang);
     return lang;

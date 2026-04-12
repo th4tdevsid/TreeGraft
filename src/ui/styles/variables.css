@@ -56,9 +56,11 @@
   --color-diff-added-bg: #0d2b1e;
   --color-diff-added-line: #1a4731;
   --color-diff-added-text: #3fb950;
+  --color-diff-added-muted: rgba(63, 185, 80, 0.12);
   --color-diff-removed-bg: #2b0d0d;
   --color-diff-removed-line: #4f1e1e;
   --color-diff-removed-text: #f85149;
+  --color-diff-removed-muted: rgba(248, 81, 73, 0.12);
   --color-diff-hunk-bg: #1b2b3a;
   --color-diff-hunk-text: #58a6ff;
   --color-diff-context-bg: #0d1117;
@@ -106,9 +108,11 @@
   --color-diff-added-bg: #dafbe1;
   --color-diff-added-line: #ccffd8;
   --color-diff-added-text: #1a7f37;
+  --color-diff-added-muted: rgba(26, 127, 55, 0.1);
   --color-diff-removed-bg: #ffebe9;
   --color-diff-removed-line: #ffd7d5;
   --color-diff-removed-text: #cf222e;
+  --color-diff-removed-muted: rgba(207, 34, 46, 0.1);
   --color-diff-hunk-bg: #ddf4ff;
   --color-diff-hunk-text: #0969da;
   --color-diff-context-bg: #ffffff;
