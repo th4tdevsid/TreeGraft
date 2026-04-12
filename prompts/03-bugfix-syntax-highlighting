@@ -64,3 +64,32 @@ Implementation:
 Do not change any interfaces in src/core/interfaces/.
 All errors via Result<T, AppError>.
 No any types.
+<<<<<<< HEAD
+=======
+
+
+########################################################
+########################################################
+########################################################
+########################################################
+
+Claude Reply 
+
+########################################################
+########################################################
+########################################################
+########################################################
+
+
+
+  Bug 1 — TreeSitterParser now resolves both tree-sitter.wasm and grammar wasm files via new URL('tree-sitter/...', document.baseURI).href. This resolves against the page's base
+  URL, so it works on both the Vite dev server (http://localhost:5173/) and production Electron (file:///path/to/dist/). Parse errors now log via console.warn so failures are
+  visible.
+
+  Bug 2 — For lines that are paired (one removed + one added in the same change block):
+  - computeIntraLineDiff() runs Diff.diffChars() and checks if ≥ 30% of characters are unchanged
+  - If similar enough: the line gets a muted background (--color-diff-added/removed-muted) and changed character spans get a full-intensity highlight (.intraAdded / .intraRemoved)
+
+  - If too different (similarity < 30%): falls back to the existing full-intensity line background
+
+>>>>>>> 493d81b (fix: fix syntax highlighting wasm path and add intra-line char diff)
