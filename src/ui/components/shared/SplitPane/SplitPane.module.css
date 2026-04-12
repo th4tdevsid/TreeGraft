@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+.panel {
+  overflow-y: auto;
+  overflow-x: auto;
+  flex-shrink: 0;
+  min-width: 0;
+
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+}
+
+.panel::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.panel::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track);
+}
+
+.divider {
+  flex-shrink: 0;
+  width: 4px;
+  background: var(--color-border);
+  cursor: col-resize;
+  transition: background 0.1s ease;
+}
+
+.divider:hover {
+  background: var(--color-accent);
+}

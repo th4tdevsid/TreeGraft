@@ -1,5 +1,11 @@
-// Electron IPC bridge
-// Exposes typed channels between the main process and the renderer.
-// All IPC calls go through here — no direct ipcRenderer usage in UI code.
+// Electron IPC preload script
+// Runs in the renderer context with access to contextBridge and ipcRenderer.
+// This is the ONLY place that touches electron IPC APIs — UI code never
+// imports from electron directly.
+import { contextBridge, ipcRenderer } from 'electron'
+import type { FileContent } from '@core/interfaces/types'
 
-export {}
+contextBridge.exposeInMainWorld('electronAPI', {
+  openFile: (): Promise<FileContent | null> =>
+    ipcRenderer.invoke('open-file') as Promise<FileContent | null>,
+})

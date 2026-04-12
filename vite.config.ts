@@ -46,6 +46,7 @@ export default defineConfig({
       '@core': resolve(__dirname, 'src/core'),
       '@ui': resolve(__dirname, 'src/ui'),
       '@ipc': resolve(__dirname, 'src/ipc'),
+      '@config': resolve(__dirname, 'src/config'),
     },
   },
   build: {

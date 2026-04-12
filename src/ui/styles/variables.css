@@ -66,6 +66,19 @@
   /* Scrollbar */
   --color-scrollbar-thumb: #30363d;
   --color-scrollbar-track: transparent;
+
+  /* Syntax highlighting tokens */
+  --color-tok-keyword: #ff7b72;
+  --color-tok-string: #a5d6ff;
+  --color-tok-number: #79c0ff;
+  --color-tok-comment: #8b949e;
+  --color-tok-type: #ffa657;
+  --color-tok-property: #79c0ff;
+  --color-tok-operator: #ff7b72;
+  --color-tok-punctuation: #8b949e;
+  --color-tok-escape: #79c0ff;
+  --color-tok-regex: #7ee787;
+  --color-tok-identifier: #e6edf3;
 }
 
 /* Light theme */
@@ -103,4 +116,17 @@
   /* Scrollbar */
   --color-scrollbar-thumb: #d0d7de;
   --color-scrollbar-track: transparent;
+
+  /* Syntax highlighting tokens */
+  --color-tok-keyword: #cf222e;
+  --color-tok-string: #0550ae;
+  --color-tok-number: #0550ae;
+  --color-tok-comment: #6e7781;
+  --color-tok-type: #953800;
+  --color-tok-property: #0550ae;
+  --color-tok-operator: #cf222e;
+  --color-tok-punctuation: #6e7781;
+  --color-tok-escape: #0550ae;
+  --color-tok-regex: #116329;
+  --color-tok-identifier: #1f2328;
 }

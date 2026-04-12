@@ -165,3 +165,19 @@ export interface SyntaxTree {
   rootNode: SyntaxNode
   source: string
 }
+
+// ---------------------------------------------------------------------------
+// UI domain types
+// ---------------------------------------------------------------------------
+
+export interface FileContent {
+  path: string
+  name: string
+  content: string
+  language: Language | null
+}
+
+export interface DiffStats {
+  additions: number
+  deletions: number
+}

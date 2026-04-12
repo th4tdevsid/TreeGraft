@@ -27,7 +27,8 @@
     "paths": {
       "@core/*": ["src/core/*"],
       "@ui/*": ["src/ui/*"],
-      "@ipc/*": ["src/ipc/*"]
+      "@ipc/*": ["src/ipc/*"],
+      "@config/*": ["src/config/*"]
     }
   },
   "include": ["src"],

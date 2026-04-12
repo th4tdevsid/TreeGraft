@@ -14,3 +14,8 @@ Rules:
 - No blank lines between type and subject
 - Body is optional, only add if genuinely needed for context
 
+## Code style
+
+- Always use semicolons in TypeScript and JavaScript
+- Every file must end with a newline
+
