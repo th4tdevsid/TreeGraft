@@ -162,3 +162,46 @@ Claude Reply
   node_modules/tree-sitter-<lang>). Without them, parse() rejects and the viewer degrades to plain text — all other functionality works without them.
 
 ✻ Brewed for 14m 22s
+
+
+
+For sytax highlighting
+
+npm install tree-sitter-cli tree-sitter-typescript tree-sitter-javascript tree-sitter-python tree-sitter-java tree-sitter-rust
+
+mkdir -p public/tree-sitter/grammars
+
+npx tree-sitter build-wasm node_modules/tree-sitter-typescript
+npx tree-sitter build-wasm node_modules/tree-sitter-javascript
+npx tree-sitter build-wasm node_modules/tree-sitter-python
+npx tree-sitter build-wasm node_modules/tree-sitter-java
+npx tree-sitter build-wasm node_modules/tree-sitter-rust
+
+mv tree-sitter-*.wasm public/tree-sitter/grammars/
+
+
+Ran this command for creating grammar and .wasm files
+
+node -e "
+const langs = [
+  'tree-sitter-typescript',
+  'tree-sitter-javascript', 
+  'tree-sitter-python',
+  'tree-sitter-java',
+  'tree-sitter-rust'
+];
+const fs = require('fs');
+const path = require('path');
+
+fs.mkdirSync('public/tree-sitter/grammars', { recursive: true });
+
+langs.forEach(lang => {
+  const src = path.join('node_modules', lang, lang + '.wasm');
+  if (fs.existsSync(src)) {
+    fs.copyFileSync(src, path.join('public/tree-sitter/grammars', lang + '.wasm'));
+    console.log('copied', lang);
+  } else {
+    console.log('not found', src);
+  }
+});
+"

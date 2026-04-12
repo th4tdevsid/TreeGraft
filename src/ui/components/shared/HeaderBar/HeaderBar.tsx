@@ -1,10 +1,10 @@
-import type { DiffStats } from '@core/interfaces/types'
-import styles from './HeaderBar.module.css'
+import type { DiffStats } from '@core/interfaces/types';
+import styles from './HeaderBar.module.css';
 
 interface HeaderBarProps {
-  leftFile: string
-  rightFile: string
-  stats: DiffStats
+  leftFile: string;
+  rightFile: string;
+  stats: DiffStats;
 }
 
 export default function HeaderBar({ leftFile, rightFile, stats }: HeaderBarProps): JSX.Element {
@@ -27,5 +27,5 @@ export default function HeaderBar({ leftFile, rightFile, stats }: HeaderBarProps
         {rightFile || '—'}
       </span>
     </div>
-  )
+  );
 }

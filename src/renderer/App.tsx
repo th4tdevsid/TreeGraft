@@ -1,22 +1,22 @@
-import { useState, useCallback } from 'react'
-import type { FileContent } from '@core/interfaces/types'
-import DiffViewer from '@ui/components/diff/DiffViewer'
-import '@ui/styles/variables.css'
-import styles from './App.module.css'
+import { useState, useCallback } from 'react';
+import type { FileContent } from '@core/interfaces/types';
+import DiffViewer from '@ui/components/diff/DiffViewer';
+import '@ui/styles/variables.css';
+import styles from './App.module.css';
 
 export default function App(): JSX.Element {
-  const [leftFile, setLeftFile] = useState<FileContent | null>(null)
-  const [rightFile, setRightFile] = useState<FileContent | null>(null)
+  const [leftFile, setLeftFile] = useState<FileContent | null>(null);
+  const [rightFile, setRightFile] = useState<FileContent | null>(null);
 
   const openLeft = useCallback(async () => {
-    const file = await window.electronAPI?.openFile()
-    if (file) setLeftFile(file)
-  }, [])
+    const file = await window.electronAPI?.openFile();
+    if (file) setLeftFile(file);
+  }, []);
 
   const openRight = useCallback(async () => {
-    const file = await window.electronAPI?.openFile()
-    if (file) setRightFile(file)
-  }, [])
+    const file = await window.electronAPI?.openFile();
+    if (file) setRightFile(file);
+  }, []);
 
   return (
     <div data-theme="dark" className={styles.app}>
@@ -39,5 +39,5 @@ export default function App(): JSX.Element {
         />
       </main>
     </div>
-  )
+  );
 }

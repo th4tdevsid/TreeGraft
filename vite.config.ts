@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import electron from 'vite-plugin-electron'
-import renderer from 'vite-plugin-electron-renderer'
-import { resolve } from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import electron from 'vite-plugin-electron';
+import renderer from 'vite-plugin-electron-renderer';
+import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [
@@ -12,7 +12,7 @@ export default defineConfig({
         // Main process entry
         entry: 'src/main/index.ts',
         onstart(options) {
-          options.startup()
+          options.startup();
         },
         vite: {
           build: {
@@ -27,7 +27,7 @@ export default defineConfig({
         // IPC preload (renderer-accessible bridge)
         entry: 'src/ipc/index.ts',
         onstart(options) {
-          options.reload()
+          options.reload();
         },
         vite: {
           build: {
@@ -52,4 +52,4 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
-})
+});

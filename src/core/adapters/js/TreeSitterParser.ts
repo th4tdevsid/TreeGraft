@@ -1,6 +1,6 @@
-import Parser from 'web-tree-sitter'
-import type { StructuralParser } from '@core/interfaces/StructuralParser'
-import type { Entity, Language, SyntaxNode, SyntaxTree } from '@core/interfaces/types'
+import Parser from 'web-tree-sitter';
+import type { StructuralParser } from '@core/interfaces/StructuralParser';
+import type { Entity, Language, SyntaxNode, SyntaxTree } from '@core/interfaces/types';
 
 // ---------------------------------------------------------------------------
 // Language → wasm file mapping
@@ -14,7 +14,7 @@ const LANGUAGE_WASM: Record<Language, string> = {
   python: 'tree-sitter-python.wasm',
   java: 'tree-sitter-java.wasm',
   rust: 'tree-sitter-rust.wasm',
-}
+};
 
 const EXTENSION_TO_LANGUAGE: Record<string, Language> = {
   '.ts': 'typescript',
@@ -26,40 +26,40 @@ const EXTENSION_TO_LANGUAGE: Record<string, Language> = {
   '.py': 'python',
   '.java': 'java',
   '.rs': 'rust',
-}
+};
 
 export class TreeSitterParser implements StructuralParser {
-  private initPromise: Promise<void> | null = null
-  private ready = false
-  private languageCache = new Map<Language, Parser.Language>()
+  private initPromise: Promise<void> | null = null;
+  private ready = false;
+  private languageCache = new Map<Language, Parser.Language>();
 
   // ---------------------------------------------------------------------------
   // Initialisation
   // ---------------------------------------------------------------------------
 
   private init(): Promise<void> {
-    if (this.ready) return Promise.resolve()
-    if (this.initPromise !== null) return this.initPromise
+    if (this.ready) return Promise.resolve();
+    if (this.initPromise !== null) return this.initPromise;
 
     this.initPromise = Parser.init({
       // tree-sitter.wasm must be in public/tree-sitter/
       locateFile: (name: string) => `/tree-sitter/${name}`,
     }).then(() => {
-      this.ready = true
-    })
+      this.ready = true;
+    });
 
-    return this.initPromise
+    return this.initPromise;
   }
 
   private async loadLanguage(language: Language): Promise<Parser.Language> {
-    const cached = this.languageCache.get(language)
-    if (cached !== undefined) return cached
+    const cached = this.languageCache.get(language);
+    if (cached !== undefined) return cached;
 
-    await this.init()
-    const wasmFile = LANGUAGE_WASM[language]
-    const lang = await Parser.Language.load(`/tree-sitter/grammars/${wasmFile}`)
-    this.languageCache.set(language, lang)
-    return lang
+    await this.init();
+    const wasmFile = LANGUAGE_WASM[language];
+    const lang = await Parser.Language.load(`/tree-sitter/grammars/${wasmFile}`);
+    this.languageCache.set(language, lang);
+    return lang;
   }
 
   // ---------------------------------------------------------------------------
@@ -67,26 +67,26 @@ export class TreeSitterParser implements StructuralParser {
   // ---------------------------------------------------------------------------
 
   async parse(code: string, language: Language): Promise<SyntaxTree> {
-    const lang = await this.loadLanguage(language)
-    const tsParser = new Parser()
-    tsParser.setLanguage(lang)
-    const tree = tsParser.parse(code)
-    const rootNode = adaptNode(tree.rootNode)
-    tsParser.delete()
+    const lang = await this.loadLanguage(language);
+    const tsParser = new Parser();
+    tsParser.setLanguage(lang);
+    const tree = tsParser.parse(code);
+    const rootNode = adaptNode(tree.rootNode);
+    tsParser.delete();
 
-    return { language, source: code, rootNode }
+    return { language, source: code, rootNode };
   }
 
   // Stub for v1 — entity extraction is a v2 feature
   async extractEntities(_code: string, _language: Language): Promise<Entity[]> {
-    return []
+    return [];
   }
 
   detectLanguage(filePath: string): Language | null {
-    const dot = filePath.lastIndexOf('.')
-    if (dot === -1) return null
-    const ext = filePath.slice(dot).toLowerCase()
-    return EXTENSION_TO_LANGUAGE[ext] ?? null
+    const dot = filePath.lastIndexOf('.');
+    if (dot === -1) return null;
+    const ext = filePath.slice(dot).toLowerCase();
+    return EXTENSION_TO_LANGUAGE[ext] ?? null;
   }
 }
 
@@ -106,5 +106,5 @@ function adaptNode(node: Parser.SyntaxNode): SyntaxNode {
     isNamed: node.isNamed,
     // Adapt all children recursively
     children: node.children.map(adaptNode),
-  }
+  };
 }

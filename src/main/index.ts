@@ -1,8 +1,8 @@
 // Electron main process entry point
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
-import fs from 'fs/promises'
-import path from 'path'
-import type { FileContent, Language } from '@core/interfaces/types'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import fs from 'fs/promises';
+import path from 'path';
+import type { FileContent, Language } from '@core/interfaces/types';
 
 // ---------------------------------------------------------------------------
 // Extension → Language mapping (mirrors TreeSitterParser, kept in sync)
@@ -17,13 +17,13 @@ const EXTENSION_TO_LANGUAGE: Record<string, Language> = {
   '.py': 'python',
   '.java': 'java',
   '.rs': 'rust',
-}
+};
 
 function detectLanguage(filePath: string): Language | null {
-  const dot = filePath.lastIndexOf('.')
-  if (dot === -1) return null
-  const ext = filePath.slice(dot).toLowerCase()
-  return EXTENSION_TO_LANGUAGE[ext] ?? null
+  const dot = filePath.lastIndexOf('.');
+  if (dot === -1) return null;
+  const ext = filePath.slice(dot).toLowerCase();
+  return EXTENSION_TO_LANGUAGE[ext] ?? null;
 }
 
 // ---------------------------------------------------------------------------
@@ -31,7 +31,7 @@ function detectLanguage(filePath: string): Language | null {
 // ---------------------------------------------------------------------------
 
 ipcMain.handle('open-file', async (): Promise<FileContent | null> => {
-  const win = BrowserWindow.getFocusedWindow()
+  const win = BrowserWindow.getFocusedWindow();
 
   const result = await dialog.showOpenDialog(win ?? new BrowserWindow(), {
     properties: ['openFile'],
@@ -43,24 +43,24 @@ ipcMain.handle('open-file', async (): Promise<FileContent | null> => {
       },
       { name: 'All Files', extensions: ['*'] },
     ],
-  })
+  });
 
-  if (result.canceled || result.filePaths.length === 0) return null
+  if (result.canceled || result.filePaths.length === 0) return null;
 
-  const filePath = result.filePaths[0]
+  const filePath = result.filePaths[0];
 
   try {
-    const content = await fs.readFile(filePath, 'utf-8')
+    const content = await fs.readFile(filePath, 'utf-8');
     return {
       path: filePath,
       name: path.basename(filePath),
       content,
       language: detectLanguage(filePath),
-    }
+    };
   } catch {
-    return null
+    return null;
   }
-})
+});
 
 // ---------------------------------------------------------------------------
 // Window lifecycle
@@ -75,27 +75,27 @@ function createWindow(): void {
       contextIsolation: true,
       nodeIntegration: false,
     },
-  })
+  });
 
   if (process.env['VITE_DEV_SERVER_URL'] !== undefined) {
-    void win.loadURL(process.env['VITE_DEV_SERVER_URL'])
+    void win.loadURL(process.env['VITE_DEV_SERVER_URL']);
   } else {
-    void win.loadFile(path.join(__dirname, '../dist/index.html'))
+    void win.loadFile(path.join(__dirname, '../dist/index.html'));
   }
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  createWindow();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
+      createWindow();
     }
-  })
-})
+  });
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
-})
+});
