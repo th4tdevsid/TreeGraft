@@ -1,0 +1,71 @@
+Read CONTEXT.md fully before starting.
+
+Two bug fixes for the diff viewer.
+
+## Bug 1 — Hunk count shows "1 of 1 change" regardless of actual hunks
+
+The FloatingNav is showing the wrong hunk count. It is collapsing all
+changes into a single hunk instead of grouping them correctly.
+
+A hunk is a contiguous block of changes. Two change blocks separated by
+unchanged lines are two separate hunks.
+
+Fix the hunk detection logic in DiffViewer. Hunks should be computed
+from the diff result by grouping contiguous changed lines (added or
+removed) separated by unchanged lines into distinct hunk objects.
+
+Each hunk should have:
+  - startIndex: number  (row index of first changed line)
+  - endIndex: number    (row index of last changed line)
+
+FloatingNav receives the correct hunk array and navigates between them.
+
+Test with code-1.ts and code-2.ts — should show "1 of 6 changes" or
+similar, not "1 of 1 change".
+
+## Bug 2 — Long lines truncated in right panel
+
+Long lines in the right panel are cut off without horizontal scroll.
+Each panel needs independent horizontal scroll when line content exceeds
+panel width.
+
+Fix:
+- Each panel in SplitPane should have overflow-x: auto
+- Line content must not wrap — white-space: nowrap on each line
+- Horizontal scroll must be independent per panel (not synced)
+- Vertical scroll remains synced between panels
+
+## Tests
+- Add Vitest cases for hunk grouping logic:
+  - Single contiguous block = 1 hunk
+  - Two blocks separated by unchanged lines = 2 hunks
+  - All lines changed = 1 hunk
+  - No changes = 0 hunks
+  - Alternating changed/unchanged lines = correct hunk count
+
+Do not change any interfaces in src/core/interfaces/.
+No any types.
+All errors via Result<T, AppError>.
+
+
+########################################################
+########################################################
+########################################################
+########################################################
+
+Claude Reply 
+
+########################################################
+########################################################
+########################################################
+########################################################
+
+
+⏺ Both bugs are fixed and committed:
+
+  Bug 1 — Hunk count: computeViewHunks(leftRows) now scans the rendered panel rows directly and groups contiguous non-context rows into ViewHunk objects. FloatingNav uses these
+  instead of the structuredPatch hunks that were merging nearby change blocks. 6 new Vitest cases cover the edge cases (no changes, single block, two separated blocks,
+  all-changed, placeholders, alternating).
+
+  Bug 2 — Long-line truncation: .line gets min-width: max-content so the row never shrinks below its content width, and .lineContent uses flex: 1 0 auto (flex-shrink: 0) so it
+  stops being compressed by the flex container.
