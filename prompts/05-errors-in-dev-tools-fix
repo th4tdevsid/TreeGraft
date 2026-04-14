@@ -1,0 +1,73 @@
+Read CONTEXT.md fully before starting.
+
+Syntax highlighting is not working. Here is the console error:
+
+web-tree-sitter.js: wasm streaming compile failed: TypeError: Failed to 
+execute 'compile' on 'WebAssembly': Incorrect response MIME type. 
+Expected 'application/wasm'.
+
+web-tree-sitter.js: falling back to ArrayBuffer instantiation
+
+web-tree-sitter.js: failed to asynchronously prepare wasm: 
+CompileError: WebAssembly.instantiate(): expected magic word 00 61 73 6d, 
+found 3c 21 64 6f @+0
+
+The bytes 3c 21 64 6f are <!do — the start of <!doctype html>. Vite is 
+serving the HTML fallback instead of the actual wasm binary. The wasm 
+files exist in public/tree-sitter/ but are not being served correctly.
+
+Fix the Vite and Electron configuration so that:
+1. tree-sitter.wasm and grammar .wasm files are served with the correct 
+   MIME type and not intercepted by Vite's HTML fallback
+2. The fix must work in both dev (Vite dev server) and production 
+   (Electron file:// URL)
+3. Do not change any interfaces in src/core/interfaces/
+
+Also run: ls public/tree-sitter/ and ls public/tree-sitter/grammars/ and 
+confirm the wasm files are present before making any changes.o
+
+
+Errors in the console -- 
+
+VM4 sandbox_bundle:2 Electron Security Warning (Insecure Content-Security-Policy) This renderer process has either no Content Security
+  Policy set or a policy with "unsafe-eval" enabled. This exposes users of
+  this app to unnecessary security risks.
+
+For more information and help, consult
+https://electronjs.org/docs/tutorial/security.
+This warning will not show up
+once the app is packaged.
+web-tree-sitter.js?v=d953ad38:569 wasm streaming compile failed: TypeError: Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.
+(anonymous)	@	web-tree-sitter.js?v=d953ad38:569
+web-tree-sitter.js?v=d953ad38:570 falling back to ArrayBuffer instantiation
+web-tree-sitter.js?v=d953ad38:552 failed to asynchronously prepare wasm: CompileError: WebAssembly.instantiate(): expected magic word 00 61 73 6d, found 3c 21 64 6f @+0
+web-tree-sitter.js?v=d953ad38:510 Aborted(CompileError: WebAssembly.instantiate(): expected magic word 00 61 73 6d, found 3c 21 64 6f @+0)
+web-tree-sitter.js?v=d953ad38:514 Uncaught (in promise) RuntimeError: Aborted(CompileError: WebAssembly.instantiate(): expected magic word 00 61 73 6d, found 3c 21 64 6f @+0). Build with -sASSERTIONS for more info.
+    at abort (web-tree-sitter.js?v=d953ad38:514:23)
+    at web-tree-sitter.js?v=d953ad38:553:17
+﻿
+
+
+########################################################
+########################################################
+########################################################
+########################################################
+
+Claude Reply 
+
+########################################################
+########################################################
+########################################################
+########################################################
+
+Done. What was wrong and what was fixed:
+
+  Root cause: tree-sitter.wasm (the main WebAssembly binary for the parser runtime) was never copied from node_modules/web-tree-sitter/ into public/tree-sitter/. When the renderer
+   called Parser.init(), it fetched tree-sitter/tree-sitter.wasm — Vite found no matching static file and served its HTML fallback. WebAssembly streaming compile rejected the
+  wrong MIME type, fell back to ArrayBuffer, and then ArrayBuffer instantiation failed because <!doctype html> isn't a valid wasm binary.
+
+  Two-part fix:
+  1. Missing file — tree-sitter.wasm is now in public/tree-sitter/ (consistent with how grammar wasm files are already handled). The buildStart hook in wasmMimePlugin also
+  re-copies it on every build so it stays in sync with the installed web-tree-sitter version.
+  2. MIME type — wasmMimePlugin adds a dev-server middleware that sets Content-Type: application/wasm for any .wasm request, enabling WebAssembly streaming compile instead of the
+  slower ArrayBuffer fallback.
