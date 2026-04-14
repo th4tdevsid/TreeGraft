@@ -1,10 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
-import type { DiffHunk } from "@core/interfaces/types";
 import { navigate } from "./navigate";
 import styles from "./FloatingNav.module.css";
 
+/** Minimal hunk descriptor — row indices into a panel row array. */
+export interface NavHunk {
+  startIndex: number;
+  endIndex: number;
+}
+
 interface FloatingNavProps {
-  hunks: DiffHunk[];
+  hunks: NavHunk[];
   onNavigate: (index: number) => void;
 }
 

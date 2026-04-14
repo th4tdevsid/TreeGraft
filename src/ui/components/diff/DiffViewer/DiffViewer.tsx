@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useCallback, useState } from "react";
-import type { FileContent, DiffHunk, SyntaxTree } from "@core/interfaces/types";
+import type { FileContent, SyntaxTree } from "@core/interfaces/types";
 import { diffEngine, parser } from "@config/engines";
 import SplitPane, {
   type SplitPaneHandle,
@@ -8,6 +8,7 @@ import FloatingNav from "@ui/components/shared/FloatingNav";
 import HeaderBar from "@ui/components/shared/HeaderBar";
 import { buildRows, type PanelRow, type CharRange } from "./buildRows";
 import { tokenizeFile, type Token } from "./tokenize";
+import { computeViewHunks } from "./viewHunks";
 import styles from "./DiffViewer.module.css";
 
 // ---------------------------------------------------------------------------
@@ -253,11 +254,6 @@ export default function DiffViewer({
     return diffEngine.diffLines(effectiveLeft.content, effectiveRight.content);
   }, [effectiveLeft, effectiveRight]);
 
-  const hunkResult = useMemo(() => {
-    if (!effectiveLeft || !effectiveRight) return null;
-    return diffEngine.diff(effectiveLeft.content, effectiveRight.content);
-  }, [effectiveLeft, effectiveRight]);
-
   const { left: leftRows, right: rightRows } = useMemo(
     () => (diffResult ? buildRows(diffResult.lines) : { left: [], right: [] }),
     [diffResult],
@@ -317,7 +313,7 @@ export default function DiffViewer({
   // Hunk navigation
   // ---------------------------------------------------------------------------
 
-  const hunks: DiffHunk[] = hunkResult?.hunks ?? [];
+  const hunks = useMemo(() => computeViewHunks(leftRows), [leftRows]);
 
   const handleNavigate = useCallback(
     (index: number) => {
@@ -325,18 +321,12 @@ export default function DiffViewer({
       const hunk = hunks[index];
       if (!hunk) return;
 
-      // Find row index in leftRows where lineNumber === hunk.oldStart
-      const rowIndex = leftRows.findIndex(
-        (r) => r.lineNumber === hunk.oldStart,
-      );
-      if (rowIndex < 0) return;
-
       const rh = rowHeightRef.current;
       if (rh > 0) {
-        splitPaneRef.current.scrollTo(rowIndex * rh);
+        splitPaneRef.current.scrollTo(hunk.startIndex * rh);
       }
     },
-    [hunks, leftRows],
+    [hunks],
   );
 
   // ---------------------------------------------------------------------------
@@ -354,8 +344,8 @@ export default function DiffViewer({
   // ---------------------------------------------------------------------------
 
   const stats = {
-    additions: hunkResult?.additions ?? 0,
-    deletions: hunkResult?.deletions ?? 0,
+    additions: diffResult?.additions ?? 0,
+    deletions: diffResult?.deletions ?? 0,
   };
 
   // ---------------------------------------------------------------------------
